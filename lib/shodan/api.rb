@@ -16,10 +16,12 @@ module Shodan
   class WebAPI
     attr_accessor :api_key
     attr_accessor :base_url
+    attr_accessor :exploitdb
     
     def initialize(api_key)
       @api_key = api_key
       @base_url = "http://www.shodanhq.com/api/"
+      @exploitdb = ExploitDB.new(self)
     end
     
     # Internal method that sends out the HTTP request.
@@ -44,7 +46,6 @@ module Shodan
       
       return data
     end
-    private :request
     
     # Get all available information on an IP.
     #
@@ -65,6 +66,62 @@ module Shodan
     def search(query)
       return request('search', {:q => query})
     end
+  end
+  
+  # The ExploitDB class depends shouldn't be used independently,
+  # as it depends on the WebAPI class.
+  #
+  # Author:: achillean (mailto:jmath at surtri.com)
+  #
+  # :title:Shodan::ExploitDB
+  class ExploitDB
+    attr_accessor :api
+    
+    def initialize(api)
+      @api = api
+    end
+    
+    # Download the exploit code from the ExploitDB archive.
+    # 
+    # Arguments:
+    # id    -- ID of the ExploitDB entry
+    # 
+    # Returns:
+    # A hash with the following fields:
+    # filename        -- Name of the file
+    # content-type    -- Mimetype
+    # data            -- Contents of the file
+    def download(id)
+      return @api.request('exploitdb/download', {:id => "#{id}"})
+    end
+    
+    # Search the ExploitDB archive.
+    #    
+    # Arguments:
+    # query     -- Search terms
+    #
+    # Optional arguments:
+    # author    -- Name of the exploit submitter
+    # platform  -- Target platform (e.g. windows, linux, hardware etc.)
+    # port      -- Service port number
+    # type      -- Any, dos, local, papers, remote, shellcode and webapps
+    #
+    # Returns:
+    # A dictionary with 2 main items: matches (list) and total (int).
+    # Each item in 'matches' is a dictionary with the following elements:
+    #
+    # id
+    # author
+    # date
+    # description
+    # platform
+    # port
+    # type
+    def search(query, params={})
+      params[:q] = query
+      return @api.request('exploitdb/search', params)
+    end
+    
   end
   
 end
