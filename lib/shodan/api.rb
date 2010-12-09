@@ -22,6 +22,7 @@ module Shodan
       @api_key = api_key
       @base_url = "http://www.shodanhq.com/api/"
       @exploitdb = ExploitDB.new(self)
+      @msf = Msf.new(self)
     end
     
     # Internal method that sends out the HTTP request.
@@ -68,7 +69,7 @@ module Shodan
     end
   end
   
-  # The ExploitDB class depends shouldn't be used independently,
+  # The ExploitDB class shouldn't be used independently,
   # as it depends on the WebAPI class.
   #
   # Author:: achillean (mailto:jmath at surtri.com)
@@ -120,6 +121,41 @@ module Shodan
     def search(query, params={})
       params[:q] = query
       return @api.request('exploitdb/search', params)
+    end
+    
+  end
+  
+  # The Msf class shouldn't be used independently,
+  # as it depends on the WebAPI class.
+  #
+  # Author:: achillean (mailto:jmath at surtri.com)
+  #
+  # :title:Shodan::Msf
+  class Msf
+    attr_accessor :api
+    
+    def initialize(api)
+      @api = api
+    end
+
+    # Download a metasploit module given the fullname (id) of it.
+    #
+    # Arguments:
+    # id        -- fullname of the module (ex. auxiliary/admin/backupexec/dump)
+    # 
+    # Returns:
+    # A dictionary with the following fields:
+    # # filename        -- Name of the file
+    # content-type    -- Mimetype
+    # data            -- File content
+    def download(id)
+      return @api.request('msf/download', {:id => "#{id}"})
+    end
+    
+    # Search for a metasploit module
+    def search(query, params={})
+      params[:q] = query
+      return @api.request('msf/search', params)
     end
     
   end

@@ -1,3 +1,7 @@
+Visit the official Shodan API documentation at:
+
+[http://docs.shodanhq.com](http://docs.shodanhq.com)
+
 ## Installation
 
 To install the library use rubygems:
@@ -37,3 +41,7 @@ To properly handle potential errors, you should wrap all requests in a try/excep
 	else
 		puts "Unknown error"
 	end
+
+## Articles
+
+* [Perl, Python and Ruby API libraries](http://www.surtri.com/2010/10/20/perl-python-ruby-api/)

@@ -1,3 +1,3 @@
 module Shodan
-  Version = VERSION = '0.2.0'
+  Version = VERSION = '0.3.0'
 end
