@@ -17,6 +17,7 @@ module Shodan
     attr_accessor :api_key
     attr_accessor :base_url
     attr_accessor :exploitdb
+    attr_accessor :msf
     
     def initialize(api_key)
       @api_key = api_key
