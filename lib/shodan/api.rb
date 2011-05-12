@@ -16,12 +16,14 @@ module Shodan
   class WebAPI
     attr_accessor :api_key
     attr_accessor :base_url
+    attr_accessor :dataloss
     attr_accessor :exploitdb
     attr_accessor :msf
     
     def initialize(api_key)
       @api_key = api_key
       @base_url = "http://www.shodanhq.com/api/"
+      @dataloss = DatalossDB.new(self)
       @exploitdb = ExploitDB.new(self)
       @msf = Msf.new(self)
     end
@@ -68,6 +70,43 @@ module Shodan
     def search(query)
       return request('search', {:q => query})
     end
+  end
+  
+  # The DatalossDB class shouldn't be used independently,
+  # as it depends on the WebAPI class.
+  #
+  # Author:: achillean (mailto:jmath at surtri.com)
+  #
+  # :title:Shodan::DatalossDB
+  class DatalossDB
+    attr_accessor :api
+    
+    def initialize(api)
+      @api = api
+    end
+    
+    # Search the Dataloss DB archive.
+    #
+    # Arguments:
+    # name          -- Name of the affected company/ organisation
+    # 
+    # arrest        -- whether the incident resulted in an arrest
+    # breaches      -- the type of breach that occurred (Hack, MissingLaptop etc.)
+    # country       -- country where the incident took place
+    # ext           -- whether an external, third party was affected
+    # ext_names     -- the name of the third party company that was affected
+    # lawsuit       -- whether the incident resulted in a lawsuit
+    # records       -- the number of records that were lost/ stolen
+    # recovered     -- whether the affected items were recovered
+    # sub_types     -- the sub-categorization of the affected company/ organization
+    # source        -- whether the incident occurred from inside or outside the organization
+    # stocks        -- stock symbol of the affected company
+    # types         -- the basic type of organization (government, business, educational)
+    # uid           -- unique ID for the incident
+    def search(params={})
+      return @api.request('datalossdb/search', params)
+    end
+    
   end
   
   # The ExploitDB class shouldn't be used independently,
