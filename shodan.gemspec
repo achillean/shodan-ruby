@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files  = [ "LICENSE", "README.md" ]
   s.rdoc_options      = ["--charset=UTF-8"]
 
-  s.add_dependency "json",            "~> 1.4.6"
+  s.add_dependency "json",            ">= 1.4.6"
 
   s.description = <<description
   A Ruby library to interact with the SHODAN API.
