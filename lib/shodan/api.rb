@@ -32,7 +32,7 @@ module Shodan
     # Expects a webservice function (ex. 'search') name and a hash of arguments.
     def request(func, args)
       # Convert the argument hash into a string
-      args_string = args.map{|k, v| "#{CGI.escape(k.to_s)}=#{CGI.escape(v)}"}.join("&")
+      args_string = args.map{|k, v| "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"}.join("&")
         
       # Craft the final request URL
       url = "#{@base_url}#{func}?key=#{@api_key}&#{args_string}"
