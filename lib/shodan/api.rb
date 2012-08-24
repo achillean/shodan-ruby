@@ -67,8 +67,9 @@ module Shodan
     # query - search query; same format as the website (string)
     #
     # Returns a hash containing the search results
-    def search(query)
-      return request('search', {:q => query})
+    def search(query, params={})
+      params[:q] = query
+      return request('search', params)
     end
   end
   
