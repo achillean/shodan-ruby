@@ -71,6 +71,32 @@ module Shodan
       params[:q] = query
       return request('search', params)
     end
+    
+    # Find how many results there are for a search term.
+    #
+    # Arguments:
+    # query - search query; same format as the website (string)
+    #
+    # Returns a hash containing the total number of search results
+    def count(query)
+      return request('count', {:q => query})
+    end
+    
+    # Get a greater list of all cities and countries where the devices
+    # are located.
+    #
+    # Arguments:
+    # query - search query; same format as the website (string)
+    #
+    # Returns a hash containing the search results
+    def locations(query)
+      return request('locations', {:q => query})
+    end
+    
+    # Returns information about the current API key.
+    def info(query)
+      return request('info', {})
+    end
   end
   
   # The DatalossDB class shouldn't be used independently,
