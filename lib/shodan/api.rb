@@ -4,6 +4,12 @@ require 'json'
 require 'net/http'
 
 module Shodan
+  # An APIError class to raise when API errors are encountered.
+  #
+  # Author:: ipwnstuff (mailto:e at ipwnstuff.com)
+  #
+  # :title:Shodan:APIError
+  APIError = Class.new(StandardError)
   
   # The WebAPI class interfaces with the shodanhq.com/api
   # It currently supports 2 methods:
@@ -40,15 +46,24 @@ module Shodan
       # Send the request
       response = Net::HTTP.get_response(URI.parse(url))
       
-      # Convert the JSON data into a native Ruby hash
-      data = JSON.parse(response.body)
-      
+      # Attempt to convert the response data into a native Ruby hash
+      # TODO: Determine what other response codes Shodan could return
+      if response.code.eql? '200'
+        data = JSON.parse(response.body)
+      elsif response.code.eql? '502'
+        raise APIError, 'Unable to connect to the Shodan API.'
+      end
+
       # Raise an error if something went wrong
       if data.has_key? 'error'
-        raise data['error']
+        raise APIError, data['error']
       end
       
-      return data
+      data
+    rescue Net::ReadTimeout => e
+      raise APIError, e.message
+    rescue JSON::ParserError => e
+      raise APIError, "Malformed JSON was retreived.\n#{e.message}"
     end
     
     # Get all available information on an IP.
@@ -58,7 +73,7 @@ module Shodan
     #
     # Returns a hash containing the host information
     def host(ip)
-      return request('host', {:ip => ip})
+      request('host', {:ip => ip})
     end
     
     # Perform a search on Shodan.
@@ -69,7 +84,7 @@ module Shodan
     # Returns a hash containing the search results
     def search(query, params={})
       params[:q] = query
-      return request('search', params)
+      request('search', params)
     end
     
     # Find how many results there are for a search term.
@@ -79,7 +94,7 @@ module Shodan
     #
     # Returns a hash containing the total number of search results
     def count(query)
-      return request('count', {:q => query})
+      request('count', {:q => query})
     end
     
     # Get a greater list of all cities and countries where the devices
@@ -95,7 +110,7 @@ module Shodan
     
     # Returns information about the current API key.
     def info(query)
-      return request('info', {})
+      request('info', {})
     end
   end
   
@@ -224,7 +239,5 @@ module Shodan
       params[:q] = query
       return @api.request('msf/search', params)
     end
-    
   end
-  
 end
