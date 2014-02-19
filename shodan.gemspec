@@ -5,9 +5,9 @@ Gem::Specification.new do |s|
   s.name              = "shodan"
   s.version           = Shodan::Version
   s.date              = Time.now.strftime('%Y-%m-%d')
-  s.summary           = "A Ruby library to interact with the SHODAN API."
+  s.summary           = "A Ruby library to interact with the Shodan API."
   s.homepage          = "http://github.com/achillean/shodan-ruby"
-  s.email             = "jmath@surtri.com"
+  s.email             = "jmath@shodan.io"
   s.authors           = [ "John Matherly" ]
 
   s.files             = %w( README.md LICENSE HISTORY.md )
@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
   s.add_dependency "json",            ">= 1.4.6"
 
   s.description = <<description
-  A Ruby library to interact with the SHODAN API.
+  A Ruby library to interact with the Shodan API.
 description
 end
