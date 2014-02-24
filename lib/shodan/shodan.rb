@@ -95,7 +95,7 @@ module Shodan
     # Returns a hash containing the total number of search results
     def count(query, params={})
       params[:query] = query
-      return request('shodan', 'shodan/host/count', params)
+      request('shodan', 'shodan/host/count', params)
     end
 
     # Returns information about the current API key.
