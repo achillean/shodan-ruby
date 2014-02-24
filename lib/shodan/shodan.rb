@@ -146,7 +146,7 @@ module Shodan
     # A dictionary with 1 main item: total (int).
     def count(query, params={})
       params[:query] = query
-      return @api.request('exploits', 'count', params)
+      @api.request('exploits', 'count', params)
     end
 
   end
