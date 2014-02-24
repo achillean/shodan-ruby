@@ -131,7 +131,7 @@ module Shodan
     # Please visit https://developer.shodan.io/api/exploit-specification for up-to-date information on what an Exploit result contains.
     def search(query, params={})
       params[:query] = query
-      return @api.request('exploits', 'search', params)
+      @api.request('exploits', 'search', params)
     end
 
     # Search the Shodan Exploits archive for exploits but don't return results, only the number of matches.
