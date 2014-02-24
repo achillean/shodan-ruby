@@ -17,4 +17,13 @@ describe Shodan::Shodan do
     it { expect(subject.convert_args_to_string({foo: 'Foo'})).to eq('foo=Foo') }
     it { expect(subject.convert_args_to_string({foo: 'Foo', 'bar' => 'Bar'})).to eq('foo=Foo&bar=Bar') }
   end
+
+  describe '#crafted_url_with' do
+    let(:url) { 'url' }
+    let(:func) { 'func' }
+    let(:api_key) { '1234' }
+    let(:args) { 'aaa=bbb&ccc=ddd' }
+    subject { Shodan::Shodan.new(api_key) }
+    it { expect(subject.crafted_url_with(url, func, api_key, args)).to eq("#{url}#{func}?key=#{api_key}&#{args}") }
+  end
 end

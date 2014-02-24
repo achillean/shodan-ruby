@@ -36,15 +36,17 @@ module Shodan
       args.map { |k, v| "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}" }.join("&")
     end
 
+    def crafted_url_with(base_url, func, api_key, args_string)
+      "#{base_url}#{func}?key=#{api_key}&#{args_string}"
+    end
+
     # Internal method that sends out the HTTP request.
     # Expects a webservice function (ex. 'search') name and a hash of arguments.
     def request(type, func, args)
       base_url = select_base_url_for(type)
 
       args_string = convert_args_to_string(args)
-
-      # Craft the final request URL
-      url = "#{base_url}#{func}?key=#{@api_key}&#{args_string}"
+      url = crafted_url_for(base_url, func, @api_key, args_string)
 
       # Send the request
       puts url
