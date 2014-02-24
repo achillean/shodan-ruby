@@ -5,7 +5,12 @@ require 'openssl'
 require 'net/http'
 
 module Shodan
-  
+
+  BASE_URL = {
+    main: 'https://api.shodan.io/',
+    exploits: 'https://exploits.shodan.io/api/'
+  }
+
   # The Shodan class interfaces with the official Shodan API.
   # For more information on the API, please visit https://developer.shodan.io
   #
@@ -16,30 +21,27 @@ module Shodan
     attr_accessor :api_key
     attr_accessor :base_url
     attr_accessor :exploits
-    
+
     def initialize(api_key)
       @api_key = api_key
-      @base_url = "https://api.shodan.io/"
-      @base_url_exploits = "https://exploits.shodan.io/api/"
-
       @exploits = Exploits.new(self)
     end
-    
+
+    def base_url_for(type)
+      BASE_URL.fetch((type.to_sym rescue ''), BASE_URL[:main])
+    end
+
     # Internal method that sends out the HTTP request.
     # Expects a webservice function (ex. 'search') name and a hash of arguments.
     def request(type, func, args)
-      if type == "exploits"
-        base_url = @base_url_exploits
-      else
-        base_url = @base_url
-      end
+      base_url = select_base_url_for(type)
 
       # Convert the argument hash into a string
       args_string = args.map{|k, v| "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"}.join("&")
-        
+
       # Craft the final request URL
       url = "#{base_url}#{func}?key=#{@api_key}&#{args_string}"
-      
+
       # Send the request
       puts url
       uri = URI.parse(url)
@@ -47,18 +49,18 @@ module Shodan
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       response = http.get(uri.request_uri)
-      
+
       # Convert the JSON data into a native Ruby hash
       data = JSON.parse(response.body)
-      
+
       # Raise an error if something went wrong
       if data.has_key? 'error'
         raise data['error']
       end
-      
+
       return data
     end
-    
+
     # Get all available information on an IP.
     #
     # Arguments:
@@ -68,7 +70,7 @@ module Shodan
     def host(ip)
       return request('shodan', "shodan/host/#{ip}", {})
     end
-    
+
     # Perform a search on Shodan.
     #
     # Arguments:
@@ -79,7 +81,7 @@ module Shodan
       params[:query] = query
       return request('shodan', 'shodan/host/search', params)
     end
-    
+
     # Find how many results there are for a search term.
     #
     # Arguments:
@@ -90,13 +92,13 @@ module Shodan
       params[:query] = query
       return request('shodan', 'shodan/host/count', params)
     end
-    
+
     # Returns information about the current API key.
     def info()
       return request('shodan', 'api-info', {})
     end
   end
-  
+
   # The Exploits class shouldn't be used independently,
   # as it depends on the Shodan class.
   #
@@ -105,13 +107,13 @@ module Shodan
   # :title:Shodan::Exploits
   class Exploits
     attr_accessor :api
-    
+
     def initialize(api)
       @api = api
     end
-    
+
     # Search the Shodan Exploits archive for exploits.
-    #    
+    #
     # Arguments:
     # query     -- Search terms
     #
@@ -126,9 +128,9 @@ module Shodan
       params[:query] = query
       return @api.request('exploits', 'search', params)
     end
-    
+
     # Search the Shodan Exploits archive for exploits but don't return results, only the number of matches.
-    #    
+    #
     # Arguments:
     # query     -- Search terms
     #
@@ -141,7 +143,7 @@ module Shodan
       params[:query] = query
       return @api.request('exploits', 'count', params)
     end
-    
+
   end
-  
+
 end
