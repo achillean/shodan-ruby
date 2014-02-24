@@ -84,7 +84,7 @@ module Shodan
     # Returns a hash containing the search results
     def search(query, params={})
       params[:query] = query
-      return request('shodan', 'shodan/host/search', params)
+      request('shodan', 'shodan/host/search', params)
     end
 
     # Find how many results there are for a search term.
