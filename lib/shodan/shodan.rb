@@ -31,13 +31,17 @@ module Shodan
       BASE_URL.fetch((type.to_sym rescue ''), BASE_URL[:main])
     end
 
+    def convert_args_to_string(args)
+      # TODO: maybe use URI/CGI std lib
+      args.map { |k, v| "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}" }.join("&")
+    end
+
     # Internal method that sends out the HTTP request.
     # Expects a webservice function (ex. 'search') name and a hash of arguments.
     def request(type, func, args)
       base_url = select_base_url_for(type)
 
-      # Convert the argument hash into a string
-      args_string = args.map{|k, v| "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"}.join("&")
+      args_string = convert_args_to_string(args)
 
       # Craft the final request URL
       url = "#{base_url}#{func}?key=#{@api_key}&#{args_string}"
