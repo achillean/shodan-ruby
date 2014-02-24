@@ -73,7 +73,7 @@ module Shodan
     #
     # Returns a hash containing the host information
     def host(ip)
-      return request('shodan', "shodan/host/#{ip}", {})
+      request('shodan', "shodan/host/#{ip}", {})
     end
 
     # Perform a search on Shodan.
