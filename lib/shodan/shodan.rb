@@ -57,23 +57,13 @@ module Shodan
     # Expects a webservice function (ex. 'search') name and a hash of arguments.
     def request(type, func, args)
       base_url = select_base_url_for(type)
-
       args_string = convert_args_to_string(args)
       url = crafted_url_for(base_url, func, @api_key, args_string)
-
-      # Send the request
       puts url
       response = response_for(url)
-
-      # Convert the JSON data into a native Ruby hash
       data = data_from(response)
-
-      # Raise an error if something went wrong
-      if data.has_key? 'error'
-        raise data['error']
-      end
-
-      return data
+      raise data['error'] if data.has_key? 'error'
+      data
     end
 
     # Get all available information on an IP.
