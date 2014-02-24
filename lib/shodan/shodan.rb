@@ -40,6 +40,15 @@ module Shodan
       "#{base_url}#{func}?key=#{api_key}&#{args_string}"
     end
 
+    def response_for(url)
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      get = Net::HTTP.Get.new uri.request_uri
+      http.request(get)
+    end
+
     # Internal method that sends out the HTTP request.
     # Expects a webservice function (ex. 'search') name and a hash of arguments.
     def request(type, func, args)
@@ -50,11 +59,7 @@ module Shodan
 
       # Send the request
       puts url
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      response = http.get(uri.request_uri)
+      response = response_for(url)
 
       # Convert the JSON data into a native Ruby hash
       data = JSON.parse(response.body)
