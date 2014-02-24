@@ -99,8 +99,8 @@ module Shodan
     end
 
     # Returns information about the current API key.
-    def info()
-      return request('shodan', 'api-info', {})
+    def info
+      request('shodan', 'api-info', {})
     end
   end
 
