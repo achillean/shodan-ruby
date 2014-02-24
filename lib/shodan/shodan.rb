@@ -49,6 +49,10 @@ module Shodan
       http.request(get)
     end
 
+    def data_from(response)
+      JSON.parse(response.body)
+    end
+
     # Internal method that sends out the HTTP request.
     # Expects a webservice function (ex. 'search') name and a hash of arguments.
     def request(type, func, args)
@@ -62,7 +66,7 @@ module Shodan
       response = response_for(url)
 
       # Convert the JSON data into a native Ruby hash
-      data = JSON.parse(response.body)
+      data = data_from(response)
 
       # Raise an error if something went wrong
       if data.has_key? 'error'
