@@ -41,7 +41,6 @@ module Shodan
       url = "#{base_url}#{func}?key=#{@api_key}&#{args_string}"
       
       # Send the request
-      puts url
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
