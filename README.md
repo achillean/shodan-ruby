@@ -54,3 +54,8 @@ To properly handle potential errors, you should wrap all requests in a try/excep
 	else
 		puts "Unknown error"
 	end
+
+## Tests
+
+1.  export your API key to SHODAN_KEY
+2.  `bundle exec rspec spec`
