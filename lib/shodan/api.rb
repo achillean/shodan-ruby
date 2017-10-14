@@ -37,8 +37,13 @@ module Shodan
       # Craft the final request URL
       url = "#{@base_url}#{func}?key=#{@api_key}&#{args_string}"
       
+
       # Send the request
-      response = Net::HTTP.get_response(URI.parse(url))
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      response = http.get(uri.request_uri)
       
       # Convert the JSON data into a native Ruby hash
       data = JSON.parse(response.body)
